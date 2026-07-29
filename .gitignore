@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Environment Variables
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Pytest
+.pytest_cache/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Python cache
+*.log
+
+# Build
+build/
+dist/
+
+# Temporary files
+*.tmp
+
+# Model files
+models/*.pkl
+models/*.joblib
+
+# Large datasets (keep folder structure only)
+Data/raw/
