@@ -25,7 +25,7 @@ env/
 .DS_Store
 Thumbs.db
 
-# Python cache
+# Logs
 *.log
 
 # Build
@@ -36,8 +36,11 @@ dist/
 *.tmp
 
 # Model files
-models/*.pkl
-models/*.joblib
+models/
+*.pkl
+*.joblib
 
-# Large datasets (keep folder structure only)
-Data/raw/
+# Data
+data/raw/
+data/processed/
+data/final/
