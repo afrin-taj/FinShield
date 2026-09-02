@@ -11,22 +11,23 @@ Creates customer-level features from the raw.bureau table.
 import sys
 from pathlib import Path
 import pandas as pd
+import numpy as np
 
 # Add the src folder to Python's path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from config import (
+from src.config import (
     RAW_SCHEMA,
     FEATURE_SCHEMA,
     FINAL_DATA_DIR
 )
 
-from database import (
+from src.database import (
     read_table,
     write_table
 )
 
-from utils import (
+from src.utils import (
     log,
     validate_columns,
     dataframe_summary,
@@ -36,7 +37,7 @@ from utils import (
     separator
 )
 
-from feature_configs.bureau_config import (
+from src.feature_configs.bureau_config import (
     NUMERIC_AGGREGATIONS,
     CATEGORICAL_COLUMNS,
     OUTPUT_FILE,
@@ -190,13 +191,20 @@ def create_ratio_features(df: pd.DataFrame) -> pd.DataFrame:
 
     for feature_name, (numerator, denominator) in RATIO_FEATURES.items():
 
-        denominator_values = df[denominator].replace(0, pd.NA)
+        denominator_values = (
+            df[denominator]
+            .replace(0, np.nan)
+        )
 
         df[feature_name] = (
             df[numerator] / denominator_values
         )
 
-    df.fillna(0, inplace=True)
+        df[feature_name] = (
+            df[feature_name]
+            .fillna(0)
+            .astype("float64")
+        )
 
     dataframe_summary(df)
 
@@ -245,21 +253,33 @@ def save_features(df: pd.DataFrame)-> None:
     )
 
     log("Bureau features saved successfully.")
+
+print("\nRatio Feature Data Types:\n")
+
 # ==========================
 # Main
 # ==========================
 
 def main() -> None:
+    """
+    Run the Bureau feature engineering pipeline.
+    """
 
-    start = start_timer()
+    start = start_timer(
+        "Feature Engineering Pipeline : Bureau"
+    )
 
     try:
 
         bureau = load_data()
 
-        numeric_features = create_numeric_features(bureau)
+        numeric_features = create_numeric_features(
+            bureau
+        )
 
-        categorical_features = aggregate_categorical_features(bureau)
+        categorical_features = aggregate_categorical_features(
+            bureau
+        )
 
         bureau_features = merge_bureau_features(
             numeric_features,
@@ -274,22 +294,32 @@ def main() -> None:
             bureau_features
         )
 
-        save_features(bureau_features)
+        save_features(
+            bureau_features
+        )
 
         print("\nFinal Bureau Features\n")
         print(bureau_features.head())
 
     except Exception as e:
 
-        log("=" * 60)
+        separator()
+
         log("Pipeline Failed")
         log(f"ERROR : {e}")
-        log("=" * 60)
+
+        separator()
 
     finally:
 
         end_timer(start)
 
+        log("Pipeline completed successfully.")
+
+bureau = read_table(
+    "feature",
+    "bureau_features"
+)
 
 if __name__ == "__main__":
     main()

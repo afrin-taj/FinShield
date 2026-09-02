@@ -26,6 +26,18 @@ def load_data() -> pd.DataFrame:
         "master_dataset"
     )
 
+    # Convert bureau ratio columns back to numeric
+    ratio_columns = [
+        "bureau_debt_to_credit_ratio",
+        "bureau_overdue_to_credit_ratio"
+    ]
+
+    for column in ratio_columns:
+        master[column] = pd.to_numeric(
+            master[column],
+            errors="coerce"
+        )
+
     dataframe_summary(master)
 
     return master

@@ -117,6 +117,7 @@ def optimize_features(master):
     log("Optimizing dataframe...")
 
     return optimize_memory(master)
+    
 
 # ==========================
 # Save Features
@@ -174,6 +175,11 @@ def main():
     end_timer(start)
 
     log("Pipeline completed successfully.")
+
+master = read_table(
+    "feature",
+    "master_dataset"
+)
 
 if __name__ == "__main__":
     main()

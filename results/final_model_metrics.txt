@@ -1,0 +1,49 @@
+FinShield - Final Model Metrics
+================================
+
+Final Model
+-----------
+XGBoost Classifier
+
+Model Selection
+---------------
+XGBoost was selected as the final model after comparing
+Logistic Regression, Random Forest, XGBoost, and LightGBM.
+
+Final Evaluation Metrics
+------------------------
+Accuracy  : 0.8540
+Precision : 0.2645
+Recall    : 0.4538
+F1 Score  : 0.3342
+ROC-AUC   : 0.7845
+
+Confusion Matrix
+----------------
+[[50273, 6265],
+ [ 2712, 2253]]
+
+Threshold Analysis
+------------------
+Selected Threshold : 0.15
+
+Threshold | Precision | Recall | F1 Score
+------------------------------------------
+0.30      | 0.3810    | 0.1641 | 0.2294
+0.25      | 0.3519    | 0.2302 | 0.2783
+0.20      | 0.3121    | 0.3257 | 0.3187
+0.15      | 0.2645    | 0.4538 | 0.3342
+
+Threshold Selection Reason
+---------------------------
+A threshold of 0.15 was selected because it achieved the
+highest F1-score among the evaluated thresholds while
+substantially improving recall for the minority default class.
+
+Business Interpretation
+-----------------------
+The model prioritizes identifying potential loan defaults
+rather than maximizing overall accuracy. This is important
+in credit-risk assessment because missing a potential
+defaulter can be more costly than incorrectly flagging
+a low-risk customer.

@@ -20,6 +20,9 @@ RAW_DATA_DIR = DATA_DIR / "raw"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 FINAL_DATA_DIR = DATA_DIR / "final"
 
+MODELS_DIR = PROJECT_ROOT / "models"
+MODELS_DIR.mkdir(exist_ok=True)
+
 # ==========================
 # Database Schemas
 # ==========================
