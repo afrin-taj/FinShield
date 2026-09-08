@@ -727,13 +727,6 @@ Potential future improvements include:
 
 ---
 
-# ⚠️ Disclaimer
-
-FinShield is an educational and portfolio machine learning project.
-
-The predictions and risk classifications are intended for demonstration and decision-support purposes and should not be treated as actual financial or lending decisions.
-
----
 
 # 👤 Author
 
