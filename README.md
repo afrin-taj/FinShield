@@ -489,7 +489,7 @@ Therefore, a customer can be displayed as **MEDIUM RISK** while the model predic
 
 The dashboard also provides SHAP-based explanations showing which features had the strongest influence on the prediction.
 
-![SHAP Explainability](reports/figures/shap_explanation.png)
+![SHAP Explainability](reports/figures/shap_explanability.png)
 ---
 
 # 📂 Project Structure
