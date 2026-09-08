@@ -1,422 +1,266 @@
-# FinShield – End-to-End Credit Risk Assessment & Decision Support System
+# 🛡️ FinShield
+## Credit Risk Assessment & Decision Support System
 
-## Project Overview
+FinShield is an end-to-end credit risk assessment system designed to analyze customer financial information, engineer credit-related features, predict loan default risk, and provide explainable risk insights through an interactive Streamlit application.
 
-FinShield is an end-to-end credit risk assessment and decision-support system designed to predict the probability of loan default.
-
-The project combines data engineering, SQL analytics, feature engineering, exploratory data analysis, machine learning, model evaluation, threshold optimization, and customer-level prediction into a single pipeline.
-
-The system uses historical loan application and credit-history data to identify customers who may have a higher probability of default. The final machine learning model generates a default probability that is converted into a risk classification to support credit-risk decision making.
+The project combines **SQL, Python, feature engineering, machine learning, explainable AI, and Streamlit deployment** into a complete credit-risk analytics pipeline.
 
 ---
 
-## Business Problem
+## 📌 Project Overview
 
-Financial institutions need to assess the creditworthiness of customers before approving loans.
+Credit risk assessment is an important problem in financial institutions because incorrectly approving high-risk customers can result in financial losses.
 
-A major challenge is identifying customers who are likely to default while avoiding unnecessary rejection of customers who are likely to repay.
+FinShield uses historical customer and credit information to:
 
-FinShield addresses this problem as a binary classification task:
+- Analyze customer financial and credit behavior
+- Engineer customer-level credit risk features
+- Build and compare multiple machine learning models
+- Predict the probability of loan default
+- Optimize the classification threshold for better minority-class detection
+- Explain individual predictions using SHAP
+- Provide an interactive customer-level risk assessment dashboard
 
-- `0` → Non-Default
-- `1` → Default
+## 🖥️ FinShield Dashboard
 
-The primary objective is not simply to maximize accuracy. Since loan default is the minority class, the project focuses on metrics such as Recall, F1 Score, and ROC-AUC to evaluate the model's ability to identify potential defaulters.
+![FinShield Dashboard](reports/figures/dashboard_overview.png)
+---
+
+## 🎯 Business Problem
+
+Financial institutions need reliable methods to identify customers who may have a higher probability of defaulting on loans.
+
+A simple accuracy-based model can be misleading in credit-risk problems because default cases represent a minority class.
+
+Therefore, FinShield focuses on:
+
+- Identifying potential defaulters
+- Improving recall for the default class
+- Balancing precision and recall
+- Providing interpretable model predictions
+- Supporting customer-level credit risk assessment
 
 ---
 
-## Project Objectives
+## 🎯 Project Objectives
 
-The main objectives of FinShield are:
-
-- Build an end-to-end credit-risk analytics pipeline.
-- Load and validate multiple credit-related datasets.
-- Perform SQL-based data analysis.
-- Engineer customer-level features from historical financial records.
-- Clean and prepare the master dataset for machine learning.
-- Perform exploratory data analysis.
-- Compare multiple machine learning algorithms.
-- Handle class imbalance during model development.
-- Evaluate different decision thresholds.
-- Select a final machine learning model.
-- Generate customer-level default-risk predictions.
-- Provide a foundation for a credit-risk decision-support application.
+1. Perform structured data analysis using SQL and Python.
+2. Build customer-level features from multiple credit datasets.
+3. Create a unified master dataset.
+4. Perform data cleaning and exploratory data analysis.
+5. Train and compare multiple classification models.
+6. Select the most suitable model using F1-score and ROC-AUC.
+7. Optimize the classification threshold.
+8. Explain individual predictions using SHAP.
+9. Build an interactive Streamlit risk assessment application.
 
 ---
 
-# Dataset
+# 📊 Dataset
 
-FinShield uses the Home Credit dataset, which contains information about loan applications and customers' previous credit history.
+The project uses the **Home Credit Default Risk** dataset.
 
-The project works with multiple related datasets rather than relying only on the main loan application table.
+The dataset contains information related to:
 
-## Main Datasets
+- Customer applications
+- Previous loan applications
+- Credit bureau records
+- Bureau balance history
+- Installment payments
+- Credit card balances
+- POS cash balances
 
-| Dataset | Purpose |
-|---|---|
-| `application_train.csv` | Main training dataset containing loan applications and the target variable |
-| `application_test.csv` | Application records used for prediction |
-| `bureau.csv` | Customer credit history from other financial institutions |
-| `bureau_balance.csv` | Monthly balance history of previous bureau credits |
-| `previous_application.csv` | Customer's previous loan applications |
-| `POS_CASH_balance.csv` | Monthly history of previous POS and cash loans |
-| `installments_payments.csv` | Previous loan installment and payment history |
-| `credit_card_balance.csv` | Monthly credit-card balance history |
-| `HomeCredit_columns_description.csv` | Description of dataset columns |
+### Major datasets
 
-## Target Variable
+```text
+application_train.csv
+application_test.csv
+bureau.csv
+bureau_balance.csv
+previous_application.csv
+installments_payments.csv
+credit_card_balance.csv
+POS_CASH_balance.csv
+```
 
-The primary target variable is:
+The main target variable is:
 
 ```text
 TARGET
 ```
 
-Where:
+where:
 
-- `0` → Customer did not default
-- `1` → Customer defaulted
-
-The target variable is highly imbalanced, with default cases representing a much smaller portion of the dataset. This class imbalance is an important consideration throughout the machine learning pipeline.
+```text
+0 → Non-default
+1 → Default
+```
 
 ---
 
-# Project Architecture
-
-The overall FinShield pipeline is:
+# 🏗️ Project Architecture
 
 ```text
 Raw CSV Files
-      ↓
-Data Inspection & Validation
-      ↓
-PostgreSQL
-      ↓
-SQL Analysis
-      ↓
+      │
+      ▼
+PostgreSQL Database
+      │
+      ▼
+SQL Analysis & Validation
+      │
+      ▼
 Feature Engineering
-      ↓
-Customer-Level Feature Tables
-      ↓
+      │
+      ├── Bureau Features
+      ├── Bureau Balance Features
+      ├── Previous Application Features
+      ├── POS Cash Features
+      ├── Installment Features
+      └── Credit Card Features
+      │
+      ▼
 Feature Merging
-      ↓
+      │
+      ▼
+Master Dataset
+      │
+      ▼
 Data Cleaning
-      ↓
-Exploratory Data Analysis
-      ↓
-Train/Test Split
-      ↓
-Feature Encoding
-      ↓
-Model Training
-      ↓
-Model Comparison
-      ↓
+      │
+      ▼
+EDA & Feature Analysis
+      │
+      ▼
+One-Hot Encoding
+      │
+      ▼
+Machine Learning
+      │
+      ├── Logistic Regression
+      ├── Random Forest
+      ├── XGBoost
+      └── LightGBM
+      │
+      ▼
+Model Evaluation
+      │
+      ▼
 Threshold Optimization
-      ↓
+      │
+      ▼
 Final XGBoost Model
-      ↓
-Customer Risk Prediction
+      │
+      ├── SHAP Explainability
+      │
+      ▼
+Streamlit Dashboard
 ```
 
 ---
 
-# Data Engineering
+# 🗄️ Data Engineering & SQL
 
-## Data Ingestion
+PostgreSQL was used to store and analyze the raw datasets.
 
-The raw datasets are loaded into PostgreSQL and organized into separate database schemas.
-
-Python ingestion scripts are used to load the datasets into the database.
-
-The ingestion layer includes:
-
-- Application training data
-- Application test data
-- Bureau data
-- Bureau balance data
-- Previous application data
-- POS cash balance data
-- Installment payment data
-- Credit card balance data
-
-The database layer provides structured storage for the datasets and allows SQL-based analysis and validation before feature engineering and machine learning.
-
----
-
-## Database Structure
-
-The project separates data into logical PostgreSQL schemas.
-
-```text
-PostgreSQL
-│
-├── raw
-│   ├── application_train
-│   ├── application_test
-│   ├── bureau
-│   ├── bureau_balance
-│   ├── previous_application
-│   ├── pos_cash_balance
-│   ├── installments_payments
-│   └── credit_card_balance
-│
-├── feature
-│   ├── bureau_features
-│   ├── bureau_balance_features
-│   ├── previous_application_features
-│   ├── pos_cash_balance_features
-│   ├── installments_payments_features
-│   └── credit_card_balance_features
-│
-└── analytics
-```
-
-This structure separates raw data from engineered features and analytical outputs.
-
----
-
-# SQL Analysis
-
-SQL was used to analyze and validate the datasets before feature engineering and machine learning.
-
-Separate analysis and validation scripts were created for the major datasets.
-
-## SQL Analysis Areas
-
-The SQL analysis covers:
+SQL analysis was performed to understand:
 
 - Dataset structure
-- Record counts
+- Customer distributions
 - Missing values
-- Customer relationships
-- Credit history
+- Credit behavior
 - Previous applications
-- Installment payments
-- Credit card behavior
-- POS cash activity
+- Installment payment behavior
+- Credit card utilization
+- POS cash behavior
 - Bureau records
-- Bureau balance history
+- Customer-level relationships
 
-Validation queries were also created to verify the database data and support reliable downstream processing.
-
-## SQL Files
-
-```text
-database/
-├── application_bureau_analysis.sql
-├── application_test_analysis.sql
-├── application_test_validation.sql
-├── application_validation.sql
-├── bureau_balance_analysis.sql
-├── bureau_balance_validation.sql
-├── bureau_validation.sql
-├── credit_card_analysis.sql
-├── credit_card_validation.sql
-├── installments_analysis.sql
-├── installments_validation.sql
-├── pos_cash_analysis.sql
-├── pos_cash_validation.sql
-├── previous_application_analysis.sql
-└── previous_application_validation.sql
-```
+Validation queries were also created to verify the results of the feature engineering process.
 
 ---
 
-# Feature Engineering
+# ⚙️ Feature Engineering
 
-The historical credit datasets contain multiple records for the same customer.
-
-Instead of directly using these transactional records, FinShield transforms them into customer-level aggregated features.
-
-The general process is:
-
-```text
-Historical Transaction Data
-          ↓
-Group by Customer
-          ↓
-Numerical Aggregations
-          ↓
-Categorical Aggregations
-          ↓
-Derived Ratios
-          ↓
-Customer-Level Feature Table
-```
+Multiple historical credit datasets were transformed into customer-level features using aggregation and feature construction techniques.
 
 ## Bureau Features
 
-The `bureau` dataset contains information about customers' previous credits from other financial institutions.
+Created customer-level statistics from bureau credit records, including:
 
-Features were aggregated at the customer level using numerical and categorical information.
+- Credit amount statistics
+- Credit duration
+- Active loan counts
+- Overdue information
+- Credit status information
+- Aggregated historical credit behavior
 
-The resulting bureau feature table contains:
-
-```text
-63 customer-level features
-```
-
-Output:
-
-```text
-data/final/bureau_features.csv
-```
-
----
+The bureau aggregation produced **63 customer-level features**.
 
 ## Bureau Balance Features
 
-The `bureau_balance` dataset contains monthly balance information for previous bureau credits.
+Bureau balance history was aggregated to capture:
 
-The feature engineering process included:
+- Account status counts
+- Balance history
+- Number of months recorded
+- Historical account behavior
 
-- Monthly balance statistics
-- Minimum and maximum months
-- Record counts
-- Credit-status counts
-- Mapping bureau accounts back to customers
-- Customer-level aggregation
-
-Categorical credit-status values were converted into numerical count features.
-
-The resulting dataset contains:
-
-```text
-134,542 rows
-34 columns
-```
-
-Memory optimization reduced the dataframe memory usage from approximately:
-
-```text
-34.90 MB → 10.01 MB
-```
-
-This represents approximately a 71% reduction in memory usage.
-
-Output:
-
-```text
-data/final/bureau_balance_features.csv
-```
-
----
+Categorical status values were converted into numerical count-based features.
 
 ## Previous Application Features
 
-The `previous_application` dataset contains customers' historical loan applications.
+Previous applications were aggregated to capture:
 
-Features were generated using:
+- Previous credit amounts
+- Previous application amounts
+- Previous annuity values
+- Contract statuses
+- Contract types
+- Application history
 
-- Numerical aggregations
-- Contract-status counts
-- Contract-type counts
-- Customer-level aggregation
-- Ratio-based features
-
-Two derived ratios include:
-
-```text
-prev_credit_application_ratio
-=
-prev_amt_credit_mean / prev_amt_application_mean
-```
-
-and:
+Additional ratio features were created:
 
 ```text
-prev_annuity_credit_ratio
-=
-prev_amt_annuity_mean / prev_amt_credit_mean
+Previous Credit / Previous Application
+Previous Annuity / Previous Credit
 ```
 
-The resulting feature table contains:
-
-```text
-338,857 rows
-26 columns
-```
-
-Output:
-
-```text
-data/final/previous_application_features.csv
-```
-
----
-
-## Other Historical Features
+## Other Feature Groups
 
 Customer-level features were also generated from:
 
-- `POS_CASH_balance`
-- `installments_payments`
-- `credit_card_balance`
-
-These datasets provide additional information about:
-
-- Previous loan repayment behavior
-- Installment payment patterns
-- POS/cash loan activity
-- Credit card utilization and balances
-
-The resulting feature tables are stored under:
-
-```text
-data/final/
-```
+- POS Cash balances
+- Installment payments
+- Credit card balances
 
 ---
 
-# Feature Merging
+# 🔗 Feature Merging
 
-After generating customer-level features from the individual historical datasets, the feature tables are merged with the main application dataset using the customer identifier.
-
-The resulting master dataset combines:
+All engineered feature datasets were merged using:
 
 ```text
-Application Information
-        +
-Bureau Features
-        +
-Bureau Balance Features
-        +
-Previous Application Features
-        +
-POS Cash Features
-        +
-Installment Features
-        +
-Credit Card Features
+SK_ID_CURR
 ```
 
-The merged dataset is stored as:
-
-```text
-data/final/master_dataset.csv
-```
+The result is a unified customer-level master dataset containing information from the application table and historical credit datasets.
 
 ---
 
-# Data Cleaning & Preprocessing
+# 🧹 Data Cleaning
 
-The merged master dataset contains a large number of numerical and categorical variables.
+The master dataset was cleaned before machine learning.
 
-The preprocessing stage prepares the data for machine learning.
-
-The process includes:
-
+The preprocessing stage included:
 - Handling missing values
-- Separating the target variable
-- Preparing numerical features
-- Preparing categorical features
 - Removing unsuitable columns
-- Encoding categorical variables
-- Aligning training and test features
-- Preparing the final machine-learning dataset
+- Preparing categorical variables
+- Preparing numerical variables
+- Removing the target from prediction features
+- Preparing consistent training and prediction feature sets
 
-The cleaned dataset is stored as:
+The cleaned dataset was saved as:
 
 ```text
 data/final/clean_master_dataset.csv
@@ -424,203 +268,88 @@ data/final/clean_master_dataset.csv
 
 ---
 
-# Exploratory Data Analysis
+# 📈 Exploratory Data Analysis
 
-Exploratory Data Analysis was performed to understand the distribution of important variables and relationships within the dataset.
+EDA was performed to understand customer characteristics and identify patterns relevant to credit risk.
 
-## Analysis Performed
-
-The analysis includes:
-
-- Dataset overview
+Analysis included:
 - Target distribution
 - Numerical feature distributions
 - Outlier analysis
 - Correlation analysis
-- Feature selection analysis
+- Feature relationships
 
-## Visualizations
-
-Visualizations were generated for important variables including:
-
-- `AMT_INCOME_TOTAL`
-- `AMT_CREDIT`
-- `AMT_ANNUITY`
-- `AMT_GOODS_PRICE`
-- `DAYS_BIRTH`
-- `DAYS_EMPLOYED`
-
-Additional visualizations include:
-
-- Target distribution
-- Correlation heatmap
-- Histograms
-- Boxplots
-
-All generated figures are stored under:
+Generated visualizations include:
 
 ```text
-reports/figures/
+target_distribution.png
+correlation_heatmap.png
+
+AMT_INCOME_TOTAL_histogram.png
+AMT_INCOME_TOTAL_boxplot.png
+
+AMT_CREDIT_histogram.png
+AMT_CREDIT_boxplot.png
+
+AMT_ANNUITY_histogram.png
+AMT_ANNUITY_boxplot.png
+
+AMT_GOODS_PRICE_histogram.png
+AMT_GOODS_PRICE_boxplot.png
+
+DAYS_BIRTH_histogram.png
+DAYS_BIRTH_boxplot.png
+
+DAYS_EMPLOYED_histogram.png
+DAYS_EMPLOYED_boxplot.png
 ```
+![Target Distribution](reports/figures/target_distribution.png)
 
 ---
 
-# Machine Learning
+# 🤖 Machine Learning
 
-FinShield treats credit default prediction as a binary classification problem.
+The problem was treated as a binary classification task.
 
-The target classes are:
+The following models were evaluated:
 
-```text
-0 → Non-Default
-1 → Default
-```
+- Logistic Regression
+- Random Forest
+- XGBoost
+- LightGBM
 
-Because the default class is significantly smaller than the non-default class, accuracy alone is not sufficient for evaluating model performance.
-
-The project therefore considers:
-
-- Accuracy
-- Precision
-- Recall
-- F1 Score
-- ROC-AUC
-
----
-
-# Feature Encoding
-
-The dataset contains categorical variables that cannot be directly processed by the machine-learning models.
-
-Categorical variables were converted using one-hot encoding.
+Categorical variables were converted using **one-hot encoding**.
 
 The final encoded feature matrix contained:
 
 ```text
 432 features
 ```
-
-The encoded training and testing datasets had the following shapes:
-
-```text
-Training: 246,008 × 432
-Testing:   61,503 × 432
-```
-
-One-hot encoding was used to represent categorical variables numerically without imposing an artificial ordinal relationship between categories.
-
 ---
 
-# Model Development
-
-Multiple machine learning algorithms were trained and evaluated.
-
-The models include:
-
-1. Logistic Regression
-2. Random Forest
-3. XGBoost
-4. LightGBM
-
-This allowed the project to compare linear and tree-based approaches for credit-risk classification.
-
----
-
-# Model Comparison
-
-The evaluated models produced the following results:
+# 📊 Model Comparison
 
 | Model | Accuracy | Precision | Recall | F1 Score | ROC-AUC |
 |---|---:|---:|---:|---:|---:|
 | Logistic Regression | 0.9190 | 0.4679 | 0.0264 | 0.0500 | 0.7733 |
 | Random Forest | 0.7598 | 0.1851 | 0.5805 | 0.2807 | 0.7507 |
-| XGBoost | **0.8540** | 0.2645 | **0.4538** | **0.3342** | **0.7845** |
+| XGBoost | **0.8540** | **0.2645** | **0.4538** | **0.3342** | **0.7845** |
 | LightGBM | 0.8545 | 0.2636 | 0.4475 | 0.3318 | 0.7831 |
 
-## Model Selection
-
-XGBoost was selected as the final model.
-
-Although Logistic Regression achieved higher accuracy, it had very low recall for the minority default class.
-
-XGBoost achieved:
-
-- Highest F1 Score: `0.3342`
-- Highest ROC-AUC: `0.7845`
-- Strong recall for the minority default class
-
-Therefore, XGBoost provided the best overall balance among the evaluated models for identifying potential default cases.
-
 ---
 
-# Final XGBoost Model
+# 🏆 Final Model — XGBoost
 
-The final model is:
-
-```text
-XGBoost Classifier
-```
-
-The trained model is stored as:
+XGBoost was selected as the final model because it achieved the highest:
 
 ```text
-models/xgboost_model.pkl
+F1 Score  = 0.3342
+ROC-AUC   = 0.7845
 ```
 
-The corresponding training feature names are stored as:
+The selection prioritizes the model's ability to identify the minority default class rather than simply maximizing accuracy.
 
-```text
-models/xgboost_features.pkl
-```
-
-The trained datasets and target variables are also stored in the `models/` directory.
-
----
-
-# Threshold Optimization
-
-Classification models generate probabilities that must be converted into class predictions using a decision threshold.
-
-Instead of relying only on the default threshold of `0.50`, FinShield evaluates multiple thresholds.
-
-## Threshold Comparison
-
-| Threshold | Precision | Recall | F1 Score |
-|---:|---:|---:|---:|
-| 0.30 | 0.3810 | 0.1641 | 0.2294 |
-| 0.25 | 0.3519 | 0.2302 | 0.2783 |
-| 0.20 | 0.3121 | 0.3257 | 0.3187 |
-| **0.15** | **0.2645** | **0.4538** | **0.3342** |
-
-The threshold of:
-
-```text
-0.15
-```
-
-was selected because it achieved the highest F1 Score among the evaluated thresholds while substantially improving recall for the minority default class.
-
----
-
-# Business Interpretation
-
-The threshold selection reflects the nature of credit-risk assessment.
-
-A false negative occurs when a customer who is likely to default is classified as non-default.
-
-A false positive occurs when a potentially safe customer is classified as high risk.
-
-In a credit-risk context, missing a potential defaulter can be costly. Therefore, the system gives greater consideration to identifying potential default cases rather than maximizing overall accuracy alone.
-
-The selected threshold of `0.15` allows the system to flag customers at a lower probability threshold, increasing the model's ability to identify potential high-risk customers.
-
-The appropriate threshold should ultimately depend on the financial institution's risk appetite and the actual business cost of false positives versus false negatives.
-
----
-
-# Final Model Evaluation
-
-The final XGBoost model produced the following evaluation results:
+### Final Evaluation
 
 ```text
 Accuracy  : 0.8540
@@ -630,123 +359,160 @@ F1 Score  : 0.3342
 ROC-AUC   : 0.7845
 ```
 
-## Confusion Matrix
+### Confusion Matrix
 
 ```text
 [[50273, 6265],
  [ 2712, 2253]]
 ```
 
-The confusion matrix provides a detailed view of correct and incorrect predictions across the non-default and default classes.
-
 ---
 
-# Model Explainability
+# 🎚️ Threshold Optimization
 
-Model explainability is an important consideration for credit-risk applications because predictions should be understandable rather than treated as a black box.
+The default classification threshold was evaluated at multiple values.
 
-SHAP was used as part of the model interpretation workflow to analyze feature contributions to model predictions.
+| Threshold | Precision | Recall | F1 Score |
+|---:|---:|---:|---:|
+| 0.30 | 0.3810 | 0.1641 | 0.2294 |
+| 0.25 | 0.3519 | 0.2302 | 0.2783 |
+| 0.20 | 0.3121 | 0.3257 | 0.3187 |
+| **0.15** | **0.2645** | **0.4538** | **0.3342** |
 
-The purpose of the explainability analysis is to understand which features contribute to predictions and provide greater transparency around the model's decision-making process.
-
----
-
-# Customer Risk Prediction
-
-FinShield includes a prediction pipeline that takes customer-level input data and generates a risk assessment.
-
-The prediction workflow is:
-
-```text
-Customer Input
-      ↓
-Feature Alignment
-      ↓
-One-Hot Encoding
-      ↓
-XGBoost Prediction
-      ↓
-Default Probability
-      ↓
-Risk Classification
-```
-
-The prediction script can be executed using:
-
-```bash
-python -m src.modeling.predict
-```
-
-The system loads the trained XGBoost model and aligns incoming customer features with the features used during training.
-
-The final classification threshold is:
+The final classification threshold was set to:
 
 ```text
 0.15
 ```
 
-The output includes:
+This threshold achieved the highest F1-score among the evaluated thresholds while substantially improving recall for the default class.
 
-- Customer identifier
-- Default probability
-- Risk level
-- Default/non-default prediction
-
-## Example Prediction
-
-```text
-FinShield : Customer 1
-Default Probability : 1.83%
-Risk Level : LOW RISK
-Prediction : NON-DEFAULT
-```
+In a credit-risk setting, identifying potential defaulters is important because false negatives can carry significant business costs.
 
 ---
 
-# Project Structure
+# 🧠 Explainable AI — SHAP
+
+FinShield uses **SHAP (SHapley Additive exPlanations)** to explain individual XGBoost predictions.
+
+For each customer, the dashboard displays:
+
+### Factors Increasing Risk
+
+Features with positive SHAP values that increase the model's estimated default risk.
+
+### Factors Reducing Risk
+
+Features with negative SHAP values that reduce the model's estimated default risk.
+
+Example factors can include:
+
+- External credit scores
+- Age
+- Installment payment behavior
+- Previous credit ratios
+- Previous application history
+- Credit amounts
+
+SHAP values represent **model influence, not causation**.
+
+---
+
+# 🖥️ Streamlit Dashboard
+
+FinShield includes an interactive Streamlit application for customer-level credit risk assessment.
+
+## Customer Selection
+
+Users can enter a customer ID to retrieve the customer's information from the cleaned master dataset.
+
+## Customer Profile
+
+The dashboard displays important customer information such as:
+
+- Gender
+- Children
+- Family members
+- Car ownership
+- Education
+- Family status
+- Housing type
+- Income type
+
+## Employment & Credit Profile
+
+The dashboard displays:
+
+- Occupation
+- Organization type
+- External credit scores
+- Previous credit ratio
+- Previous applications
+- Bureau loans
+
+## Risk Assessment
+
+The dashboard displays the model-estimated default probability and prediction.
+
+Example:
+
+```text
+Default Probability: 32.42%
+
+🔴 HIGH RISK
+
+Prediction: DEFAULT
+```
+![Risk Assessment](reports/figures/risk_assessment.png)
+
+## Dashboard Risk Bands
+
+For easier interpretation, the dashboard visually categorizes model-estimated probabilities into three risk bands:
+
+```text
+< 10%       → 🟢 LOW RISK
+10% - <20%  → 🟠 MEDIUM RISK
+≥ 20%       → 🔴 HIGH RISK
+```
+
+These dashboard risk bands are used for **presentation and interpretation**.
+
+They do not replace the model's classification threshold of:
+
+```text
+0.15
+```
+
+Therefore, a customer can be displayed as **MEDIUM RISK** while the model prediction is still **NON-DEFAULT** if the probability is below 15%.
+
+## Explainable Prediction
+
+The dashboard also provides SHAP-based explanations showing which features had the strongest influence on the prediction.
+
+![SHAP Explainability](reports/figures/shap_explanation.png)
+---
+
+# 📂 Project Structure
 
 ```text
 FinShield/
 │
 ├── app/
-│   └── dashboard/
+│   └── app.py
 │
 ├── data/
-│   ├── prediction_input.csv
-│   │
-│   ├── final/
-│   │   ├── bureau_balance_features.csv
-│   │   ├── bureau_features.csv
-│   │   ├── clean_master_dataset.csv
-│   │   ├── credit_card_balance_features.csv
-│   │   ├── installments_payments_features.csv
-│   │   ├── master_dataset.csv
-│   │   ├── pos_cash_balance_features.csv
-│   │   └── previous_application_features.csv
-│   │
+│   ├── raw/
 │   ├── processed/
-│   │   └── bureau_features.csv
-│   │
-│   └── raw/
-│       ├── application_test.csv
-│       ├── application_train.csv
-│       ├── bureau.csv
-│       ├── bureau_balance.csv
-│       ├── credit_card_balance.csv
-│       ├── HomeCredit_columns_description.csv
-│       ├── installments_payments.csv
-│       ├── POS_CASH_balance.csv
-│       ├── previous_application.csv
-│       └── sample_submission.csv
+│   └── final/
 │
 ├── database/
 │   ├── application_bureau_analysis.sql
 │   ├── application_test_analysis.sql
 │   ├── application_test_validation.sql
 │   ├── application_validation.sql
+│   ├── bureau_validation.sql
 │   ├── bureau_balance_analysis.sql
 │   ├── bureau_balance_validation.sql
-│   ├── bureau_validation.sql
 │   ├── credit_card_analysis.sql
 │   ├── credit_card_validation.sql
 │   ├── installments_analysis.sql
@@ -757,67 +523,58 @@ FinShield/
 │   └── previous_application_validation.sql
 │
 ├── models/
-│   ├── lightgbm_model.pkl
+│   ├── xgboost_model.pkl
+│   ├── xgboost_features.pkl
 │   ├── logistic_regression_model.pkl
 │   ├── logistic_regression_scaler.pkl
 │   ├── random_forest_model.pkl
-│   ├── xgboost_features.pkl
-│   ├── xgboost_model.pkl
-│   ├── X_test.pkl
-│   ├── X_train.pkl
-│   ├── y_test.pkl
-│   └── y_train.pkl
-│
-├── notebooks/
+│   └── lightgbm_model.pkl
 │
 ├── reports/
 │   └── figures/
 │
 ├── results/
-│   ├── final_model_metrics.txt
 │   ├── model_comparison.csv
-│   └── threshold_comparison.csv
+│   ├── threshold_comparison.csv
+│   └── final_model_metrics.txt
 │
 ├── src/
 │   ├── analysis/
-│   │   ├── correlation_analysis.py
-│   │   ├── dataset_overview.py
-│   │   ├── feature_selection.py
-│   │   ├── numerical_analysis.py
-│   │   └── target_analysis.py
-│   │
-│   ├── deployment/
-│   │
 │   ├── feature_configs/
-│   │
 │   ├── feature_engineering/
-│   │
 │   ├── ingestion/
-│   │
 │   ├── inspection/
-│   │
+│   ├── preprocessing/
 │   ├── modeling/
-│   │
-│   └── preprocessing/
+│   ├── config.py
+│   ├── database.py
+│   └── utils.py
 │
-└── README.md
+├── README.md
+└── requirements.txt
 ```
 
 ---
 
-# Technologies Used
+# 🛠️ Technologies Used
 
-## Programming & Data Analysis
+## Programming
 
 - Python
+- SQL
+
+## Data Analysis
+
 - Pandas
 - NumPy
+- Matplotlib
+- Seaborn
 
 ## Database
 
 - PostgreSQL
 - SQLAlchemy
-- SQL
+- psycopg2
 
 ## Machine Learning
 
@@ -825,167 +582,160 @@ FinShield/
 - XGBoost
 - LightGBM
 
-## Data Visualization
-
-- Matplotlib
-- Seaborn
-
-## Model Explainability
+## Explainable AI
 
 - SHAP
 
+## Deployment
+
+- Streamlit
+
 ## Development Tools
 
+- Jupyter Notebook
+- VS Code
 - Git
 - GitHub
-- Python Virtual Environment
-
 ---
 
-# Key Skills Demonstrated
+# 📌 Key Skills Demonstrated
 
 This project demonstrates practical experience in:
 
-- Python programming
-- SQL
-- PostgreSQL
 - Data ingestion
+- SQL analysis
+- PostgreSQL
 - Data validation
+- Feature engineering
+- Feature aggregation
 - Data cleaning
 - Exploratory Data Analysis
-- Feature engineering
-- Customer-level aggregation
-- Categorical encoding
-- Class-imbalance handling
-- Machine learning
-- Model comparison
-- Classification evaluation
+- One-hot encoding
+- Imbalanced classification
+- Machine learning model comparison
+- XGBoost
 - Threshold optimization
-- Model persistence
-- Prediction pipelines
-- Model explainability
-- Credit-risk analytics
-- End-to-end project development
+- Model evaluation
+- SHAP explainability
+- Streamlit application development
+- Git and GitHub
+- End-to-end ML workflow
 
 ---
 
-# Results & Key Takeaways
+# 📊 Key Results
 
-FinShield demonstrates how multiple sources of customer financial history can be transformed into a machine-learning-ready dataset for credit-risk prediction.
+The completed system provides:
 
-Key findings from the modeling process include:
+```text
+Final Model        : XGBoost
+F1 Score           : 0.3342
+ROC-AUC            : 0.7845
+Selected Threshold : 0.15
+Encoded Features   : 432
+```
 
-- Accuracy alone was not sufficient for evaluating the models because of class imbalance.
-- Logistic Regression achieved high accuracy but very low recall for the default class.
-- Tree-based models provided stronger minority-class detection.
-- XGBoost achieved the highest F1 Score and ROC-AUC among the evaluated models.
-- Lowering the classification threshold improved recall for potential default cases.
-- A threshold of `0.15` achieved the highest F1 Score among the evaluated thresholds.
-- Customer-level probability and risk classification make the model output easier to interpret from a decision-support perspective.
+The system successfully connects:
+
+```text
+Data Engineering
+        ↓
+SQL Analysis
+        ↓
+Feature Engineering
+        ↓
+Machine Learning
+        ↓
+Model Explainability
+        ↓
+Interactive Risk Assessment
+```
 
 ---
 
-# Future Improvements
+# 🚀 Installation
 
-Potential future improvements include:
-
-- Hyperparameter optimization using systematic search techniques.
-- Cost-sensitive model evaluation using an explicit business cost matrix.
-- Calibration of predicted default probabilities.
-- Additional feature selection techniques.
-- More extensive SHAP-based model explainability.
-- Deployment of the prediction pipeline through a user-facing application.
-- Integration with a business intelligence dashboard.
-- Model monitoring and performance tracking after deployment.
-
----
-
-# Installation & Usage
-
-## 1. Clone the Repository
+Clone the repository:
 
 ```bash
 git clone <repository-url>
 cd FinShield
 ```
 
-## 2. Create a Virtual Environment
-
-```bash
-python -m venv venv
-```
-
-## 3. Activate the Environment
+Create a virtual environment:
 
 ### Windows
 
 ```bash
+python -m venv venv
 venv\Scripts\activate
 ```
 
 ### Linux / macOS
 
 ```bash
+python -m venv venv
 source venv/bin/activate
 ```
 
-## 4. Install Dependencies
-
-Install the required Python packages using the project's dependency file.
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 5. Configure PostgreSQL
+Configure the PostgreSQL connection in the project configuration.
 
-Configure the PostgreSQL connection details in:
+---
 
-```text
-src/config.py
-```
+# ▶️ Running the Application
 
-## 6. Run the Prediction Pipeline
+Start the Streamlit dashboard:
 
 ```bash
-python -m src.modeling.predict
+streamlit run app/app.py
 ```
 
-The prediction pipeline loads the trained XGBoost model, prepares the input features, generates the default probability, and produces the corresponding risk classification.
+The application allows users to:
+
+1. Enter a customer ID.
+2. View the customer's profile.
+3. View financial and credit information.
+4. Assess credit risk.
+5. View the model-estimated default probability.
+6. View the risk category.
+7. View the model prediction.
+8. Inspect SHAP-based risk factors.
 
 ---
 
-# Conclusion
+# 🔮 Future Improvements
 
-FinShield provides an end-to-end approach to credit-risk assessment, starting from raw financial datasets and ending with customer-level default-risk predictions.
+Potential future improvements include:
 
-The project combines:
-
-```text
-Data Engineering
-        +
-SQL Analytics
-        +
-Feature Engineering
-        +
-EDA
-        +
-Machine Learning
-        +
-Model Evaluation
-        +
-Threshold Optimization
-        +
-Model Explainability
-        +
-Risk Prediction
-```
-
-By combining these components, FinShield demonstrates a practical machine-learning workflow for solving an imbalanced credit-risk classification problem and translating model predictions into a decision-support format.
+- Probability calibration
+- Cost-sensitive model optimization
+- Hyperparameter tuning
+- Cross-validation
+- Advanced class-imbalance techniques
+- Model monitoring
+- Automated data pipelines
+- Cloud deployment
+- API-based model serving
+- More detailed business decision rules
+- Interactive historical customer analysis
 
 ---
 
-# Author
+# ⚠️ Disclaimer
+
+FinShield is an educational and portfolio machine learning project.
+
+The predictions and risk classifications are intended for demonstration and decision-support purposes and should not be treated as actual financial or lending decisions.
+
+---
+
+# 👤 Author
 
 **Afrin Taj**
 
