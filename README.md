@@ -21,6 +21,12 @@ FinShield uses historical customer and credit information to:
 - Explain individual predictions using SHAP
 - Provide an interactive customer-level risk assessment dashboard
 
+## ## 🚀 Live Demo
+
+Try the deployed FinShield application:
+
+👉 [Open FinShield Dashboard](https://finshield-cznifmgnmbwb6mo83pxn7u.streamlit.app)
+
 ## 🖥️ FinShield Dashboard
 
 ![FinShield Dashboard](reports/figures/dashboard_overview.png)
