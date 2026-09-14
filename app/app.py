@@ -272,7 +272,7 @@ def load_feature_names():
 @st.cache_data
 def load_customer_data():
     return pd.read_csv(
-        "data/final/prediction_input.csv"
+        "data/prediction_input.csv"
     )
 
 
